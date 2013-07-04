@@ -24,6 +24,7 @@ import org.jboss.netty.channel.socket.nio._
 import org.jboss.netty.handler.codec.oneone._
 import org.jboss.netty.handler.codec.frame.FrameDecoder
 import org.slf4j.{ Logger, LoggerFactory }
+import reactivemongo.api.ReadPreference
 import reactivemongo.core.actors.{ Connected, Disconnected }
 import reactivemongo.core.commands.GetLastError
 import reactivemongo.core.errors._
@@ -160,13 +161,12 @@ case class Request(
     responseTo: Int, // TODO remove, nothing to do here.
     op: RequestOp,
     documents: BufferSequence,
+    readPreference: ReadPreference = ReadPreference.primary,
     channelIdHint: Option[Int] = None) extends ChannelBufferWritable {
   override val writeTo = { buffer: ChannelBuffer =>
-    {
-      buffer write header
-      buffer write op
-      buffer writeBytes documents.merged
-    }
+    buffer write header
+    buffer write op
+    buffer writeBytes documents.merged
   }
   override def size = 16 + op.size + documents.merged.writerIndex
   /** Header of this request */
@@ -184,7 +184,7 @@ case class CheckedWriteRequest(
     op: WriteRequestOp,
     documents: BufferSequence,
     getLastError: GetLastError) {
-  def apply(): (RequestMaker, RequestMaker) = RequestMaker(op, documents, None) -> getLastError.apply(op.db).maker
+  def apply(): (RequestMaker, RequestMaker) = RequestMaker(op, documents) -> getLastError.apply(op.db).maker
 }
 
 /**
@@ -197,8 +197,9 @@ case class CheckedWriteRequest(
 case class RequestMaker(
     op: RequestOp,
     documents: BufferSequence = BufferSequence.empty,
+    readPreference: ReadPreference = ReadPreference.primary,
     channelIdHint: Option[Int] = None) {
-  def apply(id: Int) = Request(id, 0, op, documents, channelIdHint)
+  def apply(id: Int) = Request(id, 0, op, documents, readPreference, channelIdHint)
 }
 
 /**
