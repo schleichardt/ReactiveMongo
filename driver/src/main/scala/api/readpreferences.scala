@@ -3,14 +3,12 @@ package reactivemongo.api
 import reactivemongo.bson._
 
 sealed trait ReadPreference {
-  def tag: Option[BSONDocument]
   def slaveOk: Boolean = true
   def filterTag: BSONDocument => Boolean
 }
 
 object ReadPreference {
   object Primary extends ReadPreference {
-    def tag = None
     override def slaveOk = false
     override def filterTag = _ => true
   }
