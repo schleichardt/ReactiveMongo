@@ -2,7 +2,7 @@ import sbt._
 import sbt.Keys._
 
 object BuildSettings {
-  val buildVersion = "0.10.0"
+  val buildVersion = "0.10.0-akka-2.3-SNAPSHOT"
 
   val filter = { (ms: Seq[(File, String)]) =>
     ms filter {
@@ -19,7 +19,7 @@ object BuildSettings {
     crossVersion := CrossVersion.binary,
     javaOptions in test ++= Seq("-Xmx512m", "-XX:MaxPermSize=512m"),
     scalacOptions ++= Seq("-unchecked", "-deprecation"),
-    scalacOptions in (Compile, doc) ++= Seq("-unchecked", "-deprecation", "-diagrams", "-implicits", "-skip-packages", "samples"),
+    scalacOptions in (Compile, doc) ++= Seq("-unchecked", "-deprecation", "-implicits", "-skip-packages", "samples"),
     scalacOptions in (Compile, doc) ++= Opts.doc.title("ReactiveMongo API"),
     scalacOptions in (Compile, doc) ++= Opts.doc.version(buildVersion),
     shellPrompt := ShellPrompt.buildShellPrompt,
@@ -121,9 +121,9 @@ object Resolvers {
 object Dependencies {
   val netty = "io.netty" % "netty" % "3.6.5.Final" cross CrossVersion.Disabled
 
-  val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.2.1"
+  val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.3.0-RC4"
 
-  val iteratees = "com.typesafe.play" %% "play-iteratees" % "2.2.0"
+  val iteratees = "com.typesafe.play" %% "play-iteratees" % "2.2-akka-2.3-SNAPSHOT"
 
   val specs = "org.specs2" %% "specs2" % "2.2.1" % "test"
 
