@@ -30,11 +30,7 @@ object BuildSettings {
 
 object Publish {
   def targetRepository: Project.Initialize[Option[sbt.Resolver]] = version { (version: String) =>
-    val nexus = "https://oss.sonatype.org/"
-    if (version.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    Some(Resolver.file("file", new File(Path.userHome.absolutePath + "/Projekte/schleichardt.github.io/jvmrepo"))(Resolver.mavenStylePatterns))
   }
 
   lazy val settings = Seq(
@@ -115,7 +111,7 @@ object Resolvers {
   val typesafe = Seq(
     "Typesafe repository snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
     "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/")
-  val resolversList = typesafe
+  val resolversList = typesafe ++ Seq("Schleichardts GitHub" at "http://schleichardt.github.io/jvmrepo/")
 }
 
 object Dependencies {
@@ -123,7 +119,7 @@ object Dependencies {
 
   val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.3.0"
 
-  val iteratees = "com.typesafe.play" %% "play-iteratees" % "2.2-akka-2.3-SNAPSHOT"
+  val iteratees = "com.typesafe.play" %% "play-iteratees" % "2.2.2-akka-2.3.1"
 
   val specs = "org.specs2" %% "specs2" % "2.2.1" % "test"
 
